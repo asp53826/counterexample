@@ -1,0 +1,30 @@
+{
+  "$schema": "../schemas/counterexample.schema.json",
+  "schemaVersion": 1,
+  "id": "sar-clean-image-overfit",
+  "caseNumber": "CX-012",
+  "title": "Autofocus damages an image that was already focused",
+  "system": "Synthetic aperture radar",
+  "engine": "sar-focus",
+  "commit": "83041573ebcfa935640f91cb091e1dbaad4f9aaa",
+  "disposition": "repaired",
+  "severity": "medium",
+  "verifiedAt": "2026-08-10",
+  "faultKind": "clean-input-overfit",
+  "invariantId": "clean-image-is-fixed-point",
+  "summary": "A historical fixed-iteration PGA implementation fitted sidelobe structure in clean data, raising entropy from 7.826 to 8.55 and inventing impossible apparent sharpness.",
+  "trigger": "Run six unconditional autofocus iterations on an already focused synthetic image containing few bright scatterers.",
+  "observed": "The estimator follows sidelobe ridges, raises entropy, and drives apparent IRW below the diffraction limit instead of remaining a no-op.",
+  "invariant": "An already focused image must be an approximate fixed point; autofocus may not improve its objective by degrading physical image quality.",
+  "fix": "Rank range bins by peak-to-mean strength and return the best-cost iterate rather than the final requested iteration.",
+  "verification": { "commandId": "autofocus-test", "testPath": "tests/test_imaging.py", "testLines": [190, 201], "result": "2 tests passed", "benchmarkPath": "README.md", "benchmarkLines": [140, 151] },
+  "metrics": [{ "label": "clean-image entropy", "broken": "8.55", "guarded": "7.826", "unit": "entropy" }],
+  "timeline": [
+    { "phase": "trigger", "title": "Focus what is already focused", "detail": "The optimizer is asked to run a fixed six iterations without an early stopping contract.", "state": "neutral" },
+    { "phase": "propagate", "title": "Fit the sidelobes", "detail": "Weak range bins dominate a phase estimate that explains artifacts rather than target blur.", "state": "fail" },
+    { "phase": "witness", "title": "Cross the diffraction limit", "detail": "Entropy rises and the apparent width becomes physically implausible.", "state": "inspect" },
+    { "phase": "guard", "title": "Return the best iterate", "detail": "Strong-bin selection plus best-cost retention makes clean input approximately unchanged.", "state": "pass" }
+  ],
+  "limits": ["The fixed-point regression is measured on synthetic clean imagery with a small target set."],
+  "tags": ["sar", "autofocus", "overfit", "regression-test"]
+}

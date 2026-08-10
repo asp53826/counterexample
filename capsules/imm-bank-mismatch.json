@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/counterexample.schema.json",
+  "schemaVersion": 1,
+  "id": "imm-bank-mismatch",
+  "caseNumber": "CX-004",
+  "title": "The motion-model bank becomes the threat",
+  "system": "Multi-target tracking",
+  "engine": "track-fusion",
+  "commit": "9a1092b8da88f5904ca190a393d77bd2bcd111b8",
+  "disposition": "bounded",
+  "severity": "high",
+  "verifiedAt": "2026-08-10",
+  "faultKind": "model-mismatch",
+  "invariantId": "motion-model-covers-threat",
+  "summary": "An IMM tuned for ±6 degree-per-second turns loses both when the target stays straight and when it turns beyond the bank at 12 degrees per second.",
+  "trigger": "Hold the three-mode bank fixed and sweep the true turn rate through 0, 3, 6, and 12 degrees per second.",
+  "observed": "At 0 degrees per second the IMM OSPA rises from 21.59 to 31.42; at 12 degrees per second it rises from 42.41 to 49.33.",
+  "invariant": "A model bank must be sized against the expected threat set and compared with its single-model baseline across the full regime.",
+  "fix": "Report the operating band, retain the sweep, and resize the modes only with an explicit trade against straight-motion cost.",
+  "verification": { "commandId": "python-test", "testPath": "tests/test_models.py", "testLines": [113, 119], "result": "67 tests passed", "benchmarkPath": "README.md", "benchmarkLines": [72, 101] },
+  "metrics": [
+    { "label": "OSPA at 0 deg/s", "broken": "31.42", "guarded": "21.59 CV", "unit": "OSPA" },
+    { "label": "OSPA at 12 deg/s", "broken": "49.33", "guarded": "42.41 CV", "unit": "OSPA" }
+  ],
+  "timeline": [
+    { "phase": "trigger", "title": "Leave the designed band", "detail": "The target either never turns or doubles the strongest turn rate represented in the bank.", "state": "neutral" },
+    { "phase": "propagate", "title": "Misallocate model probability", "detail": "Unused noisy modes tax the straight case; unmatched dynamics tax the fast-turn case.", "state": "fail" },
+    { "phase": "witness", "title": "Sweep instead of cherry-pick", "detail": "Four paired regimes expose both ends where the headline model loses.", "state": "inspect" },
+    { "phase": "boundary", "title": "Publish the operating band", "detail": "The evidence claims benefit only in the measured 3–6 degree-per-second band.", "state": "pass" }
+  ],
+  "limits": ["This is a specific three-model IMM bank, not a general claim that IMM fails outside ±6 degrees per second."],
+  "tags": ["tracking", "imm", "model-mismatch", "threat-set"]
+}

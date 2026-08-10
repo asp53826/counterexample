@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/counterexample.schema.json",
+  "schemaVersion": 1,
+  "id": "sar-high-order-phase",
+  "caseNumber": "CX-011",
+  "title": "Autofocus sharpens the wrong fragment",
+  "system": "Synthetic aperture radar",
+  "engine": "sar-focus",
+  "commit": "83041573ebcfa935640f91cb091e1dbaad4f9aaa",
+  "disposition": "bounded",
+  "severity": "high",
+  "verifiedAt": "2026-08-10",
+  "faultKind": "high-order-phase",
+  "invariantId": "autofocus-improves-focus",
+  "summary": "Phase-gradient autofocus handles smooth low-order defocus but barely improves high-order random phase error and can make the measured impulse-response width worse.",
+  "trigger": "Apply correlated random phase error up to five radians RMS, then run the same PGA configuration used for quadratic defocus.",
+  "observed": "At five radians RMS the reported recovery is 0.89x: azimuth IRW changes from 0.3096 to 0.3461 even while entropy falls.",
+  "invariant": "Autofocus improvement must survive multiple focus metrics; a lower entropy alone cannot validate a fragmented point response.",
+  "fix": "Report entropy and IRW together, retain the losing regime, and limit the recovery claim to measured low-order phase error.",
+  "verification": { "commandId": "autofocus-test", "testPath": "tests/test_imaging.py", "testLines": [182, 188], "result": "2 tests passed", "benchmarkPath": "README.md", "benchmarkLines": [115, 139] },
+  "metrics": [
+    { "label": "random 5 rad recovery", "broken": "0.89x", "guarded": "bounded", "unit": "IRW ratio" },
+    { "label": "quadratic 4 rad recovery", "broken": "1.1587", "guarded": "0.3317", "unit": "IRW" }
+  ],
+  "timeline": [
+    { "phase": "trigger", "title": "Increase phase complexity", "detail": "Random correlated structure replaces the smooth phase gradient PGA estimates well.", "state": "neutral" },
+    { "phase": "propagate", "title": "Optimize a partial signal", "detail": "Entropy improves while the dominant lobe no longer represents the full target response.", "state": "fail" },
+    { "phase": "witness", "title": "Make two metrics disagree", "detail": "IRW worsens to a 0.89x recovery even though entropy continues downward.", "state": "inspect" },
+    { "phase": "boundary", "title": "Narrow the claim", "detail": "The release claims near-diffraction recovery only for low-order defocus.", "state": "pass" }
+  ],
+  "limits": ["The raw phase history and targets are simulated under stripmap, broadside, straight-and-level geometry."],
+  "tags": ["sar", "autofocus", "phase-error", "metric-failure"]
+}

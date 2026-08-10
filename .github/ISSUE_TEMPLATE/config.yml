@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/asp53826/counterexample/security/advisories/new
+    about: Report a vulnerability in COUNTEREXAMPLE privately. Do not use public intake.
+  - name: Submission protocol
+    url: https://github.com/asp53826/counterexample/blob/main/docs/SUBMISSION-PROTOCOL.md
+    about: Read the evidence and safety boundary before submitting.

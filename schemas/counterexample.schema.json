@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asp53826.github.io/counterexample/schemas/counterexample.schema.json",
+  "title": "COUNTEREXAMPLE capsule",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "caseNumber", "title", "system", "engine", "commit", "disposition", "severity", "verifiedAt", "faultKind", "invariantId", "summary", "trigger", "observed", "invariant", "fix", "verification", "metrics", "timeline", "limits", "tags"],
+  "properties": {
+    "$schema": { "type": "string", "const": "../schemas/counterexample.schema.json" },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 72 },
+    "caseNumber": { "type": "string", "pattern": "^CX-[0-9]{3}$" },
+    "title": { "type": "string", "minLength": 8, "maxLength": 96 },
+    "system": { "type": "string", "minLength": 3, "maxLength": 40 },
+    "engine": { "type": "string", "enum": ["raft-mvcc", "track-fusion", "vio-nav", "aad-greeks", "lob-market-making", "tensorforge-webgpu", "annlite", "sar-focus"] },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "disposition": { "type": "string", "enum": ["guarded", "bounded", "repaired"] },
+    "severity": { "type": "string", "enum": ["critical", "high", "medium"] },
+    "verifiedAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "faultKind": { "type": "string", "enum": ["partition", "stale-log", "stale-read", "model-mismatch", "clutter-birth", "no-parallax", "nondifferentiable-payoff", "inventory-drift", "shape-error", "low-search-budget", "high-order-phase", "clean-input-overfit"] },
+    "invariantId": { "type": "string", "enum": ["majority-before-commit", "log-freshness-before-leadership", "reads-respect-real-time", "motion-model-covers-threat", "clutter-cannot-confirm-track", "translation-before-depth", "derivative-matches-payoff", "profit-reports-inventory-risk", "matmul-inner-dimensions-match", "latency-reports-recall", "autofocus-improves-focus", "clean-image-is-fixed-point"] },
+    "summary": { "type": "string", "minLength": 30, "maxLength": 360 },
+    "trigger": { "type": "string", "minLength": 16, "maxLength": 320 },
+    "observed": { "type": "string", "minLength": 16, "maxLength": 360 },
+    "invariant": { "type": "string", "minLength": 16, "maxLength": 280 },
+    "fix": { "type": "string", "minLength": 16, "maxLength": 360 },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commandId", "testPath", "testLines", "result"],
+      "properties": {
+        "commandId": { "type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 40 },
+        "testPath": { "type": "string", "pattern": "^(?!.*\\.\\.)[A-Za-z0-9_./-]+$", "maxLength": 180 },
+        "testLines": { "type": "array", "prefixItems": [{ "type": "integer", "minimum": 1 }, { "type": "integer", "minimum": 1 }], "items": false, "minItems": 2, "maxItems": 2 },
+        "result": { "type": "string", "minLength": 4, "maxLength": 120 },
+        "benchmarkPath": { "type": "string", "pattern": "^(?!.*\\.\\.)[A-Za-z0-9_./-]+$", "maxLength": 180 },
+        "benchmarkLines": { "type": "array", "prefixItems": [{ "type": "integer", "minimum": 1 }, { "type": "integer", "minimum": 1 }], "items": false, "minItems": 2, "maxItems": 2 }
+      }
+    },
+    "metrics": {
+      "type": "array", "minItems": 1, "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["label", "broken", "guarded", "unit"],
+        "properties": {
+          "label": { "type": "string", "maxLength": 48 },
+          "broken": { "type": "string", "maxLength": 32 },
+          "guarded": { "type": "string", "maxLength": 32 },
+          "unit": { "type": "string", "maxLength": 24 }
+        }
+      }
+    },
+    "timeline": {
+      "type": "array", "minItems": 4, "maxItems": 6,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["phase", "title", "detail", "state"],
+        "properties": {
+          "phase": { "type": "string", "enum": ["trigger", "propagate", "witness", "guard", "receipt", "boundary"] },
+          "title": { "type": "string", "maxLength": 72 },
+          "detail": { "type": "string", "maxLength": 260 },
+          "state": { "type": "string", "enum": ["neutral", "fail", "inspect", "pass"] }
+        }
+      }
+    },
+    "limits": { "type": "array", "minItems": 1, "maxItems": 4, "items": { "type": "string", "minLength": 12, "maxLength": 220 } },
+    "tags": { "type": "array", "minItems": 2, "maxItems": 8, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 32 } }
+  }
+}

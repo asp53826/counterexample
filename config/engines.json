@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "engines": {
+    "raft-mvcc": {
+      "repository": "asp53826/raft-mvcc",
+      "commit": "a5dd0986756b26ff5f375b73d03d618d9b2aded0",
+      "commands": {
+        "native-test": { "display": "make clean test", "kind": "test", "expected": "All 598 assertions passed" }
+      }
+    },
+    "track-fusion": {
+      "repository": "asp53826/track-fusion",
+      "commit": "9a1092b8da88f5904ca190a393d77bd2bcd111b8",
+      "commands": {
+        "python-test": { "display": "PYTHONPATH=. .venv/bin/pytest -q tests", "kind": "test", "expected": "67 passed" }
+      }
+    },
+    "vio-nav": {
+      "repository": "asp53826/vio-nav",
+      "commit": "f38714f391ffb0dc3ae06b418aae51f929000e1e",
+      "commands": {
+        "hover-test": { "display": "PYTHONPATH=. .venv/bin/pytest -q tests/test_filter.py::test_hovering_gives_the_camera_nothing_to_work_with", "kind": "test", "expected": "1 passed" }
+      }
+    },
+    "aad-greeks": {
+      "repository": "asp53826/aad-greeks",
+      "commit": "c26ef7aa18f473b7cfd85642a62aef3a17b94c58",
+      "commands": {
+        "digital-test": { "display": ".venv/bin/pytest -q tests/test_greeks.py::test_pathwise_aad_reports_zero_delta_for_a_digital tests/test_greeks.py::test_smoothing_recovers_the_digital_delta", "kind": "test", "expected": "2 passed" }
+      }
+    },
+    "lob-market-making": {
+      "repository": "asp53826/lob-market-making",
+      "commit": "82c75a1fd7824dd96bdb92432b58b3557cb7d577",
+      "commands": {
+        "inventory-test": { "display": ".venv/bin/pytest -q tests/test_sim.py::test_inventory_skew_holds_less_risk_than_naive", "kind": "test", "expected": "1 passed" }
+      }
+    },
+    "tensorforge-webgpu": {
+      "repository": "asp53826/tensorforge-webgpu",
+      "commit": "70a5c855ef35e01a29ba351eb2645670060b9f0b",
+      "commands": {
+        "compiler-test": { "display": "npm test -- --run", "kind": "test", "expected": "9 passed" }
+      }
+    },
+    "annlite": {
+      "repository": "asp53826/annlite",
+      "commit": "dc922c8c1816df48d75f2a16e51cd25819aab070",
+      "commands": {
+        "recall-test": { "display": ".venv/bin/pytest -q tests/test_index.py::test_recall_against_exact_brute_force tests/test_index.py::test_higher_ef_never_hurts_recall", "kind": "test", "expected": "4 passed" }
+      }
+    },
+    "sar-focus": {
+      "repository": "asp53826/sar-focus",
+      "commit": "83041573ebcfa935640f91cb091e1dbaad4f9aaa",
+      "commands": {
+        "autofocus-test": { "display": "PYTHONPATH=. .venv/bin/pytest -q tests/test_imaging.py::test_pga_handles_a_random_correlated_error tests/test_imaging.py::test_pga_does_not_wreck_an_already_focused_image", "kind": "test", "expected": "2 passed" }
+      }
+    }
+  }
+}

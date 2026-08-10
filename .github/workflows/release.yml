@@ -1,0 +1,61 @@
+name: Signed stable release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+      - name: Check out tagged source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Rebuild and validate tagged evidence
+        run: npm run build
+      - name: Stage immutable release assets
+        run: |
+          cp public/receipts/counterexample-v1.0.0-receipts.tar.gz .
+          npm sbom --sbom-format spdx > counterexample-v1.0.0.spdx.json
+          sha256sum counterexample-v1.0.0-receipts.tar.gz counterexample-v1.0.0.spdx.json > counterexample-v1.0.0.SHA256SUMS
+      - name: Attest receipt-bundle build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: counterexample-v1.0.0-receipts.tar.gz
+      - name: Attest the SPDX SBOM predicate
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: counterexample-v1.0.0-receipts.tar.gz
+          predicate-type: https://spdx.dev/Document/v2.3
+          predicate-path: counterexample-v1.0.0.spdx.json
+      - name: Publish the stable GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            counterexample-v1.0.0-receipts.tar.gz \
+            counterexample-v1.0.0.spdx.json \
+            counterexample-v1.0.0.SHA256SUMS \
+            CITATION.cff \
+            --verify-tag \
+            --title "COUNTEREXAMPLE v1.0.0 — First stable register" \
+            --notes-file docs/RELEASE_NOTES_v1.0.0.md

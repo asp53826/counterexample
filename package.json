@@ -1,0 +1,27 @@
+{
+  "name": "counterexample-institution",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A public engineering failure museum with constrained, reproducible counterexample capsules.",
+  "scripts": {
+    "dev": "npm run receipts && vite",
+    "receipts": "node scripts/generate-receipts.mjs",
+    "validate": "node scripts/validate.mjs",
+    "test": "node scripts/generate-receipts.mjs && node --test tests/*.test.mjs",
+    "check": "npm run validate && npm test && tsc --noEmit",
+    "og": "node scripts/compose-og.mjs",
+    "build": "npm run receipts && npm run og && npm run check && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "ajv": "^8.17.1",
+    "sharp": "^0.35.3",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

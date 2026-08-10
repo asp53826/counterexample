@@ -1,0 +1,14 @@
+title: "[research note] "
+labels:
+  - research-note
+body:
+  - type: markdown
+    attributes:
+      value: Use this discussion for protocol improvements or research questions. Failure candidates belong in the constrained issue form.
+  - type: textarea
+    id: note
+    attributes:
+      label: Research note
+      description: State the question, evidence, and expected effect on the institution.
+    validations:
+      required: true

@@ -1,0 +1,30 @@
+{
+  "$schema": "../schemas/counterexample.schema.json",
+  "schemaVersion": 1,
+  "id": "clutter-confirms-ghosts",
+  "caseNumber": "CX-005",
+  "title": "Pure clutter promotes 165 ghost tracks",
+  "system": "Track management",
+  "engine": "track-fusion",
+  "commit": "9a1092b8da88f5904ca190a393d77bd2bcd111b8",
+  "disposition": "repaired",
+  "severity": "high",
+  "verifiedAt": "2026-08-10",
+  "faultKind": "clutter-birth",
+  "invariantId": "clutter-cannot-confirm-track",
+  "summary": "A conventional M-of-N hit counter promotes tracks in a scene containing no targets because new-track covariance creates a gate large enough to consume random clutter.",
+  "trigger": "Run 40 scans with zero targets and six false alarms per scan while confirming any tentative track that accumulates M hits in N scans.",
+  "observed": "The historical implementation confirmed 165 tracks from pure clutter while producing plausible-looking trajectories.",
+  "invariant": "Confirmation evidence must distinguish a concentrated target likelihood from an enormous gate that merely contains something.",
+  "fix": "Replace hit counting with a Wald sequential test over a target-present versus clutter likelihood ratio.",
+  "verification": { "commandId": "python-test", "testPath": "tf/track.py", "testLines": [74, 101], "result": "67 tests passed", "benchmarkPath": "README.md", "benchmarkLines": [188, 208] },
+  "metrics": [{ "label": "false confirmations", "broken": "165", "guarded": "LLR-gated", "unit": "tracks" }],
+  "timeline": [
+    { "phase": "trigger", "title": "Remove every real target", "detail": "Only a Poisson-like field of six false alarms per scan remains.", "state": "neutral" },
+    { "phase": "propagate", "title": "Let covariance inflate the gate", "detail": "Unknown velocity makes each tentative track accept almost any nearby clutter return.", "state": "fail" },
+    { "phase": "witness", "title": "Count the ghosts", "detail": "One hundred sixty-five false tracks reach confirmation in forty scans.", "state": "inspect" },
+    { "phase": "guard", "title": "Score evidence quality", "detail": "The Wald score charges misses and rewards only concentrated likelihood under the target model.", "state": "pass" }
+  ],
+  "limits": ["The clutter process and detection model are simulated; real sensor artifacts require a calibrated likelihood model."],
+  "tags": ["tracking", "clutter", "wald-test", "historical-bug"]
+}

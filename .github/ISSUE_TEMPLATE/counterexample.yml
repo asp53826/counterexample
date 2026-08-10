@@ -1,0 +1,96 @@
+name: Counterexample candidate
+description: Submit a minimized, public, reproducible engineering failure for constrained review.
+title: "[candidate]: "
+labels:
+  - counterexample-candidate
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bring a failure and its proof. This form accepts bounded text and public URLs only. Do not submit secrets, personal data, undisclosed exploits, or executable payloads.
+
+  - type: input
+    id: repository
+    attributes:
+      label: Public source repository
+      description: A public HTTPS GitHub repository URL.
+      placeholder: https://github.com/owner/repository
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Exact source commit
+      description: The full 40-character lowercase Git commit that exhibits the failure.
+      placeholder: 0123456789abcdef0123456789abcdef01234567
+    validations:
+      required: true
+
+  - type: dropdown
+    id: fault-class
+    attributes:
+      label: Failure class
+      options:
+        - Correctness or invariant violation
+        - Model mismatch or observability boundary
+        - Performance claim boundary
+        - Numerical instability or approximation failure
+        - Unsafe default or missing guard
+        - Other bounded engineering failure
+    validations:
+      required: true
+
+  - type: textarea
+    id: invariant
+    attributes:
+      label: Falsified invariant
+      description: State one precise claim that should hold but does not.
+      placeholder: A committed entry must have been replicated to a majority in its current term.
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger
+    attributes:
+      label: Minimal trigger
+      description: Describe the smallest input, state, or event sequence that exposes the failure.
+    validations:
+      required: true
+
+  - type: textarea
+    id: witness
+    attributes:
+      label: Observed witness
+      description: Give the exact failed assertion, output, trace condition, or measured value and a public evidence link.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Deterministic reproduction
+      description: List bounded setup and reproduction steps. Commands are reviewed as text and will not be executed automatically.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: response
+    attributes:
+      label: Proposed guard, repair, or claim boundary
+      description: Explain what should change and what remains outside the claim.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-safety declaration
+      options:
+        - label: The repository and evidence are public, and I am authorized to share them.
+          required: true
+        - label: This report contains no secret, token, personal data, undisclosed exploit, or executable attachment.
+          required: true
+        - label: I understand that submission does not guarantee admission and that maintainers will not execute unreviewed commands automatically.
+          required: true

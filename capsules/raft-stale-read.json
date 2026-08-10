@@ -1,0 +1,30 @@
+{
+  "$schema": "../schemas/counterexample.schema.json",
+  "schemaVersion": 1,
+  "id": "raft-stale-read",
+  "caseNumber": "CX-003",
+  "title": "A completed write disappears from the next read",
+  "system": "Linearizability checker",
+  "engine": "raft-mvcc",
+  "commit": "a5dd0986756b26ff5f375b73d03d618d9b2aded0",
+  "disposition": "guarded",
+  "severity": "critical",
+  "verifiedAt": "2026-08-10",
+  "faultKind": "stale-read",
+  "invariantId": "reads-respect-real-time",
+  "summary": "A register write completes before a later read begins, yet the read returns the initial value. No legal sequential history can preserve that real-time order.",
+  "trigger": "Submit a two-operation history containing a completed write of 'new' followed by a non-overlapping read of null.",
+  "observed": "The P-compositional search exhausts the legal register states and returns non-linearizable with an empty witness.",
+  "invariant": "If operation A completes before operation B begins, every legal linearization places A before B and the read observes A's value.",
+  "fix": "Reject the history and expose the failed component instead of manufacturing a sequential witness.",
+  "verification": { "commandId": "native-test", "testPath": "tests/test_raft_mvcc.cpp", "testLines": [140, 150], "result": "All 598 assertions passed" },
+  "metrics": [{ "label": "legal witness", "broken": "none", "guarded": "rejected", "unit": "history" }],
+  "timeline": [
+    { "phase": "trigger", "title": "Complete the write", "detail": "Write operation 1 finishes at logical time 2 with value 'new'.", "state": "neutral" },
+    { "phase": "propagate", "title": "Return the initial value", "detail": "Read operation 2 begins at time 3 and reports null despite the completed write.", "state": "fail" },
+    { "phase": "witness", "title": "Exhaust legal orders", "detail": "Real-time precedence leaves no sequential register state matching the response.", "state": "inspect" },
+    { "phase": "guard", "title": "Refuse a false witness", "detail": "The checker returns linearizable=false and an empty witness vector.", "state": "pass" }
+  ],
+  "limits": ["The checker composes independent register histories; multi-object transactional linearizability is not claimed."],
+  "tags": ["linearizability", "stale-read", "model-checking", "witness"]
+}

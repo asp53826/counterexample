@@ -1,0 +1,30 @@
+{
+  "$schema": "../schemas/counterexample.schema.json",
+  "schemaVersion": 1,
+  "id": "raft-stale-candidate",
+  "caseNumber": "CX-002",
+  "title": "A stale candidate asks a fresher quorum to forget",
+  "system": "Raft + MVCC",
+  "engine": "raft-mvcc",
+  "commit": "a5dd0986756b26ff5f375b73d03d618d9b2aded0",
+  "disposition": "guarded",
+  "severity": "critical",
+  "verifiedAt": "2026-08-10",
+  "faultKind": "stale-log",
+  "invariantId": "log-freshness-before-leadership",
+  "summary": "A node isolated during replication later campaigns with an older log. Granting its vote could erase a committed suffix, so voters reject it on term and index freshness.",
+  "trigger": "Keep node 3 isolated while nodes 1 and 2 replicate a new entry, then heal node 3 and let it campaign after isolating node 1.",
+  "observed": "Node 3 has a strictly smaller last index and cannot transition to leader even after increasing the election term.",
+  "invariant": "A voter grants leadership only when the candidate's last log term and index are at least as fresh as its own.",
+  "fix": "Compare the candidate's last term first and last index second before persisting a vote.",
+  "verification": { "commandId": "native-test", "testPath": "tests/test_raft_mvcc.cpp", "testLines": [241, 258], "result": "All 598 assertions passed" },
+  "metrics": [{ "label": "leadership result", "broken": "requested", "guarded": "rejected", "unit": "role" }],
+  "timeline": [
+    { "phase": "trigger", "title": "Starve one follower", "detail": "Node 3 misses a replicated entry while the other two nodes preserve a majority.", "state": "neutral" },
+    { "phase": "propagate", "title": "Campaign with a short log", "detail": "The stale node increments term and requests votes from nodes holding a longer suffix.", "state": "fail" },
+    { "phase": "witness", "title": "Compare last indexes", "detail": "The fixture asserts node 3's index is lower before the campaign begins.", "state": "inspect" },
+    { "phase": "guard", "title": "Deny leadership", "detail": "Fresh voters reject the request and committed history remains leader-complete.", "state": "pass" }
+  ],
+  "limits": ["Membership is fixed; joint consensus and dynamic reconfiguration are outside this model."],
+  "tags": ["raft", "election", "leader-completeness", "stale-log"]
+}

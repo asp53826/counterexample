@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: "COUNTEREXAMPLE: A Public Engineering Failure Museum"
+message: "If this artifact supports your work, cite the archived software release."
+type: software
+version: 1.0.0
+date-released: 2026-08-10
+authors:
+  - family-names: Patel
+    given-names: Aaryan
+repository-code: "https://github.com/asp53826/counterexample"
+url: "https://asp53826.github.io/counterexample/"
+license: MIT
+abstract: >-
+  A constrained, reproducible archive of twelve real failure regimes drawn from
+  distributed systems, autonomy, quantitative engineering, ML compilers,
+  approximate search, and synthetic aperture radar. Each capsule binds a
+  trigger, invariant, source location, verification command, limitation, and
+  self-contained receipt to an exact public commit.
+keywords:
+  - reproducibility
+  - distributed systems
+  - failure analysis
+  - counterexample
+  - software verification
