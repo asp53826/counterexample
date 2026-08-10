@@ -7,7 +7,7 @@
 [![CI](https://github.com/asp53826/counterexample/actions/workflows/ci.yml/badge.svg)](https://github.com/asp53826/counterexample/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/asp53826/counterexample/badge)](https://scorecard.dev/viewer/?uri=github.com/asp53826/counterexample)
 [![CodeQL](https://github.com/asp53826/counterexample/actions/workflows/codeql.yml/badge.svg)](https://github.com/asp53826/counterexample/actions/workflows/codeql.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.PENDING.svg)](https://doi.org/10.5281/zenodo.PENDING)
+[![DOI status](https://img.shields.io/badge/DOI-awaiting_Zenodo_authorization-8b9499)](https://help.zenodo.org/docs/github/enable-repository/)
 
 > The DOI badge remains intentionally marked `PENDING` until Zenodo mints the identifier. It is not a decorative or invented DOI.
 
