@@ -27,6 +27,17 @@ test("generated receipts bind their embedded capsule digest", async () => {
   assert.equal(sha256(unsigned), receiptSha256);
 });
 
+test("the download manifest binds serialized file bytes", async () => {
+  const directory = path.join(root, "public", "receipts");
+  const index = JSON.parse(await readFile(path.join(directory, "index.json"), "utf8"));
+  for (const entry of index.receipts) {
+    const serialized = await readFile(path.join(directory, entry.filename), "utf8");
+    const receipt = JSON.parse(serialized);
+    assert.equal(sha256(serialized), entry.fileSha256);
+    assert.equal(receipt.receiptSha256, entry.receiptSha256);
+  }
+});
+
 test("the standalone verifier accepts an intact receipt", () => {
   const filename = path.join(root, "public", "receipts", "aad-digital-zero.receipt.json");
   const result = spawnSync(process.execPath, [path.join(root, "bin", "counterexample.mjs"), "verify", filename], { encoding: "utf8" });

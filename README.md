@@ -34,7 +34,8 @@ Every capsule binds:
 - a trigger, observed failure, invariant, response, and honest boundary;
 - an allowlisted verification command and source witness;
 - measured broken/constrained values where the source exposes them;
-- a self-contained JSON receipt with capsule and receipt SHA-256 digests.
+- a self-contained JSON receipt with capsule and canonical receipt SHA-256 digests;
+- a release manifest with separate SHA-256 digests for the serialized download bytes.
 
 The receipts prove what is actually claimed. The content digest detects modification. The GitHub artifact attestation establishes which repository workflow built the release bundle. Neither mechanism independently proves that a scientific conclusion is universally true.
 

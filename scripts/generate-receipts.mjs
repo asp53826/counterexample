@@ -55,13 +55,20 @@ for (const { capsule } of entries) {
   };
   const complete = { ...receipt, receiptSha256: sha256(receipt) };
   const filename = `${capsule.id}.receipt.json`;
-  await writeFile(path.join(outputDirectory, filename), `${JSON.stringify(complete, null, 2)}\n`);
-  manifest.receipts.push({ id: capsule.id, caseNumber: capsule.caseNumber, filename, sha256: complete.receiptSha256 });
+  const serialized = `${JSON.stringify(complete, null, 2)}\n`;
+  await writeFile(path.join(outputDirectory, filename), serialized);
+  manifest.receipts.push({
+    id: capsule.id,
+    caseNumber: capsule.caseNumber,
+    filename,
+    receiptSha256: complete.receiptSha256,
+    fileSha256: sha256(serialized),
+  });
 }
 
 manifest.indexSha256 = sha256(manifest.receipts);
 await writeFile(path.join(outputDirectory, "index.json"), `${JSON.stringify(manifest, null, 2)}\n`);
-await writeFile(path.join(outputDirectory, "MANIFEST.sha256"), `${manifest.receipts.map((entry) => `${entry.sha256}  ${entry.filename}`).join("\n")}\n`);
+await writeFile(path.join(outputDirectory, "MANIFEST.sha256"), `${manifest.receipts.map((entry) => `${entry.fileSha256}  ${entry.filename}`).join("\n")}\n`);
 await run("tar", ["-czf", releaseBundle, "MANIFEST.sha256", "index.json", ...manifest.receipts.map((entry) => entry.filename)], { cwd: outputDirectory });
 await copyFile(path.join(root, "CITATION.cff"), path.join(root, "public", "CITATION.cff"));
 console.log(`Generated ${manifest.receipts.length} self-contained receipts; index ${manifest.indexSha256.slice(0, 12)}`);
